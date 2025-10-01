@@ -1,4 +1,4 @@
-// Guess the LTC Bus Route — full game with scoring & unique rounds
+// Guess the LTC Bus Route — full game with scoring & unique rounds (uses properties.Name)
 
 const map = L.map('map', { zoomControl: true }).setView([42.9849, -81.2453], 12);
 
@@ -36,6 +36,9 @@ const GAME = {
 fetch('data/shapes.geojson')
   .then(r => r.json())
   .then(data => {
+    // Keep only features that actually have a Name
+    data.features = (data.features || []).filter(f => f?.properties?.Name);
+    if (!data.features.length) throw new Error('No routable features with properties.Name found');
     geojsonData = data;
     resetGame();
     startRound();
@@ -46,7 +49,7 @@ fetch('data/shapes.geojson')
   });
 
 function resetGame() {
-  GAME.routes = shuffle([...geojsonData.features]);
+  GAME.routes = shuffle([...geojsonData.features]); // unique, no repeats
   GAME.index = 0;
   GAME.score = 0;
   GAME.attempts = 0;
@@ -93,12 +96,12 @@ function startRound() {
   // Bind to buttons
   choiceBtns.forEach((btn, i) => {
     const feature = choices[i];
-    const routeName = safeName(feature);
+    const routeName = feature.properties.Name; // ← exact field from your GeoJSON
     btn.textContent = `Route ${routeName}`;
     btn.disabled = false;
     btn.classList.remove('correct', 'wrong');
 
-    btn.onclick = () => handleGuess(btn, routeName, safeName(correctFeature));
+    btn.onclick = () => handleGuess(btn, routeName, correctFeature.properties.Name);
   });
 
   // Buttons visibility
@@ -191,11 +194,6 @@ function shuffle(arr) {
   return arr;
 }
 
-function safeName(feature) {
-  // Use properties.Name; fallback to an id if needed
-  return (feature.properties && (feature.properties.Name || feature.properties.name || feature.properties.route || feature.properties.ROUTE)) ?? 'Unknown';
-}
-
 function tryFitBounds(layer) {
   try {
     const b = layer.getBounds();
@@ -203,6 +201,6 @@ function tryFitBounds(layer) {
       map.fitBounds(b.pad(0.15));
     }
   } catch (e) {
-    // ignore if bounds cannot be computed (e.g., non-line feature)
+    // ignore if bounds cannot be computed
   }
 }
