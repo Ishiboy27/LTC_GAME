@@ -7,21 +7,46 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h2>🚌 Guess the Bus Route</h2>
+  <div class="app">
+    <header class="topbar glass">
+      <h1>🚌 Guess the LTC Bus Route</h1>
+      <div class="hud">
+        <div class="hud-item">
+          <span class="label">Score</span>
+          <span id="score" class="value">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="label">Progress</span>
+          <span id="progress" class="value">0 / 0</span>
+        </div>
+      </div>
+    </header>
 
-  <div id="map"></div>
+    <main class="content">
+      <div id="map" class="glass"></div>
 
-  <div id="choices">
-    <button id="choice1"></button>
-    <button id="choice2"></button>
-    <button id="choice3"></button>
-    <button id="choice4"></button>
+      <section class="panel glass">
+        <h2 class="round-title">Which route is this?</h2>
+        <div id="choices" class="choices">
+          <button id="choice1" class="choice-btn" disabled></button>
+          <button id="choice2" class="choice-btn" disabled></button>
+          <button id="choice3" class="choice-btn" disabled></button>
+          <button id="choice4" class="choice-btn" disabled></button>
+        </div>
+
+        <p id="result" class="result"></p>
+
+        <div class="actions">
+          <button id="next" class="primary" style="display:none;">➡️ Next Route</button>
+          <button id="restart" class="secondary" style="display:none;">🔁 Play Again</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="tip glass">
+      <small>Tip: Zoom and pan the map to inspect the route before guessing.</small>
+    </footer>
   </div>
-
-  <p id="result"></p>
-  <p id="result"></p>
-<button id="play-again" style="display:none;">🔄 Play Again</button>
-
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
